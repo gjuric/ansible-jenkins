@@ -1,0 +1,34 @@
+  - name: Install jenskins apt key
+    apt_key:
+      id: D50582E6
+      url: http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key 
+      state: present
+
+  - name: Add official Jenkins repository
+    apt_repository:
+      repo: deb http://pkg.jenkins-ci.org/debian binary/
+      state: present
+      update_cache: yes
+
+  - name: Install Jenkins
+    apt: pkg=jenkins state=installed
+
+  - name: Install openjdk-6-jre
+    apt: pkg=openjdk-6-jre state=installed
+
+  - name: Install fonts
+    apt: pkg={{ item }} state=installed
+    with_items: 
+     - ttf-dejavu
+#     - ttf-dejavu-core
+#     - ttf-dejavu-extra
+  
+  - name: Install ANT
+    apt: pkg=ant state=installed
+
+  - name: Create php-template
+    file: path=/var/lib/jenkins/jobs/php-template state=directory owner=jenkins group=jenkins
+
+  - name: Copy php-template config.xml
+    copy: src=config.xml dest=/var/lib/jenkins/jobs/php-template/config.xml owner=jenkins group=jenkins mode=644
+     
